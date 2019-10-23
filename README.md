@@ -59,4 +59,4 @@ More info please see [Configuration Reference](https://cli.vuejs.org/config/)
 
 ##License
 
-MIT License
+MIT
