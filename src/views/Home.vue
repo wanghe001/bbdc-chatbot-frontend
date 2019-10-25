@@ -4,7 +4,7 @@
     <div v-if="loggedIn" class="chatbot-wrapper" :class="{expanded:explainTabClicked}">
       <h3 class="title">Hello, {{$store.state.nickName}}</h3>
       <span class="button explain" :class="{expanded:explainTabClicked}"
-            @click="explainTabClicked=!explainTabClicked">Explain</span>
+            @click="explainTabClicked=!explainTabClicked">Explanation</span>
       <div class="message-panel">
         <message-box v-for="(message,index) in this.$store.state.messages" :key="index"
           :message="message.text"
