@@ -91,7 +91,6 @@ export default {
       this.$store.dispatch('fetchMessages');
     },
     setMessageGradient(message) {
-      console.log(message);
       const redRGB = {
         red: 204,
         green: 76,
@@ -317,6 +316,20 @@ export default {
     }
     .background {
       margin-left:20px;
+      max-height:40vh;
+      overflow-y:auto;
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+      &::-webkit-scrollbar-track {
+        background: rgba(#CC4C58,0.3);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #CC4C58;
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        background: #AA2A36;
+      }
       .background-text {
         text-align: justify;
         margin:0 10px;
