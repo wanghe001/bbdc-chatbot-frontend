@@ -1,10 +1,13 @@
 <template>
   <div class="home">
     <login-box v-if="!loggedIn"></login-box>
-    <div v-if="loggedIn" class="chatbot-wrapper" :class="{expanded:explainTabClicked}">
+    <div v-if="loggedIn" class="chatbot-wrapper"
+         :class="{expanded:explainTabClicked,'expanded-left':backgroundTabClicked}">
       <h3 class="title">Hello, {{$store.state.nickName}}</h3>
       <span class="button explain" :class="{expanded:explainTabClicked}"
-            @click="explainTabClicked=!explainTabClicked">Explanation</span>
+            @click="tabButtonClicked('explain')">Explanation</span>
+      <span class="button background" :class="{expanded:backgroundTabClicked}"
+            @click="tabButtonClicked('background')">Background</span>
       <div class="message-panel">
         <message-box v-for="(message,index) in this.$store.state.messages" :key="index"
           :message="message.text"
@@ -42,6 +45,8 @@
         </div>
       </div>
     </div>
+    <div v-if="loggedIn" class="background-window" :class="{expanded: backgroundTabClicked}">
+    </div>
   </div>
 </template>
 
@@ -67,6 +72,7 @@ export default {
     return {
       userMessage: '',
       explainTabClicked: false,
+      backgroundTabClicked: false,
       background: this.$store.state.background,
       explanations: this.$store.state.explanations,
       backgroundShown: false,
@@ -125,6 +131,15 @@ export default {
       });
       return `<div class="background-text">${splittedText.join('')}</div>`;
     },
+    tabButtonClicked(button) {
+      if (button === 'background') {
+        this.backgroundTabClicked = !this.backgroundTabClicked;
+        this.explainTabClicked = false;
+      } else {
+        this.explainTabClicked = !this.explainTabClicked;
+        this.backgroundTabClicked = false;
+      }
+    },
   },
 };
 </script>
@@ -143,33 +158,59 @@ export default {
       left:10vw;
       transition: 0.4s;
     }
+    &.expanded-left{
+      left:50vw;
+      transition: 0.4s;
+    }
     .title{
       color: white;
     }
-    .explain{
-      position:absolute;
-      width:100px;
-      height:20px;
-      top:0;
-      right:-140px;
-      transform: rotate(90deg);
-      transform-origin: top left;
-      padding:5px;
-      border-radius: 5px;
-      transition: 0.4s;
-      &:hover{
-        background: #CC4C58;
-        cursor: pointer;
-      }
-      &.expanded{
-        transform: rotate(0);
-        right:-110px;
-        transition: 0.4s;
-      }
-    }
     .button {
-      background: #dd5d69;
       color:white;
+      &.explain{
+        background: #dd5d69;
+        position:absolute;
+        width:100px;
+        height:20px;
+        top:0;
+        right:-140px;
+        transform: rotate(90deg);
+        transform-origin: top left;
+        padding:5px;
+        border-radius: 5px;
+        transition: 0.4s;
+        &:hover{
+          background: #CC4C58;
+          cursor: pointer;
+        }
+        &.expanded{
+          transform: rotate(0);
+          right:-110px;
+          transition: 0.4s;
+        }
+      }
+      &.background{
+        background: #4f4c4d;
+        position:absolute;
+        width:100px;
+        height:20px;
+        top:0;
+        left:-140px;
+        transform: rotate(-90deg);
+        transform-origin: top right;
+        padding:5px;
+        border-radius: 5px;
+        transition: 0.4s;
+        &:hover{
+          background: #444444;
+          cursor: pointer;
+        }
+        &.expanded{
+          transform: rotate(0);
+          left:-110px;
+          transition: 0.4s;
+        }
+      }
     }
     .message-panel{
       background: white;
@@ -218,9 +259,10 @@ export default {
     left:30vw;
     top:10vh;
     box-shadow: 1px 1px 1px 1px #CC4C58;
-    z-index: -1;
+    z-index: -2;
     transition: 0.4s;
     border-radius: 5px;
+    background:white;
     .section {
       margin:0 20px;
       &.background{
@@ -230,6 +272,7 @@ export default {
     &.expanded{
       left:50vw;
       transition: 0.4s;
+      z-index: -1;
     }
     h2{
       color: #dd5d69;
@@ -287,6 +330,20 @@ export default {
     }
   }
   .background-window {
-
+    position:fixed;
+    width:40vw;
+    height:80vh;
+    left:30vw;
+    top:10vh;
+    box-shadow: 1px 1px 1px 1px #4f4c4d;
+    z-index: -2;
+    transition: 0.4s;
+    border-radius: 5px;
+    background:white;
+    &.expanded{
+      left:10vw;
+      transition: 0.4s;
+      z-index:-1;
+    }
   }
 </style>
