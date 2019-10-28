@@ -17,7 +17,14 @@
       </div>
       <div class="user-message-wrapper">
         <textarea id="user-text" v-model="userMessage"></textarea>
-        <span @click="submitMessage" class="user-text-submit">Send</span>
+        <div class="submit-control">
+          <span @click="submitMessage" class="user-text-submit">Send</span>
+          <label class="explain-checkbox-container">Explain
+            <input type="checkbox" v-model="explainChecked">
+            <span class="checkmark"></span>
+          </label>
+        </div>
+
       </div>
     </div>
     <div v-if="loggedIn" class="explanation-window" :class="{expanded: explainTabClicked}">
@@ -77,6 +84,7 @@ export default {
       explanations: this.$store.state.explanations,
       backgroundShown: false,
       backgroundContent: {},
+      explainChecked: false,
     };
   },
   methods: {
@@ -88,7 +96,7 @@ export default {
         });
       }
       this.userMessage = '';
-      this.$store.dispatch('fetchMessages');
+      this.$store.dispatch('fetchMessages', { explain: this.explainChecked });
     },
     setMessageGradient(message) {
       const redRGB = {
@@ -235,15 +243,22 @@ export default {
           outline: none;
         }
       }
+      .submit-control {
+        width:19%;
+        display: inline-block;
+        vertical-align: middle;
+      }
       .user-text-submit{
         vertical-align: middle;
-        width:10%;
+        text-align: center;
+        width:50%;
         margin:4%;
         background: #4f4c4d;
         color:white;
         padding:10px;
         border-radius: 5px;
         cursor: pointer;
+        display: block;
         &:hover{
          color:#eeeeee;
          background: #444444;
@@ -359,4 +374,75 @@ export default {
       z-index:-1;
     }
   }
+
+  /* The container */
+  .explain-checkbox-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin:12px 10px;
+    cursor: pointer;
+    font-size: 22px;
+    color:white;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Hide the browser's default checkbox */
+  .explain-checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 5px;
+  }
+
+  /* On mouse-over, add a grey background color */
+  .explain-checkbox-container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  .explain-checkbox-container input:checked ~ .checkmark {
+    background-color: #4f4c4d;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  .explain-checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .explain-checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
 </style>

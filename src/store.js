@@ -44,12 +44,12 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    fetchMessages() {
+    fetchMessages({ commit }, payload = { explain: true }) {
       const utterances = this.state.messages.filter(_ => !_.isExcluded).map(_ => _.text);
       const utteranceTypes = this.state.messages.filter(_ => !_.isExcluded).map(_ => `<${_.from}>`);
       const requestBody = {
         utterances,
-        explain: true,
+        explain: payload.explain !== undefined ? payload.explain : true,
         utterance_types: utteranceTypes,
       };
       const url = process.env.VUE_APP_BACKEND_URL;
@@ -70,25 +70,36 @@ export default new Vuex.Store({
             from: response.utterance_types[i].slice(1, response.utterance_types[i].length - 1),
           });
         }
-        Object.keys(response.explanation_annotations.background).forEach((key) => {
-          background.push(
-            Object.assign(
-              response.background[key],
-              { annotation: response.explanation_annotations.background[key] },
-              { link: key },
-            ),
-          );
-        });
-        response.explanation_annotations.utterances.forEach((utterance, index) => {
-          explanations.push({
-            utterance: response.utterances[index],
-            annotation: utterance,
-            type: response.utterance_types[index],
+        if (response.explain) {
+          Object.keys(response.explanation_annotations.background).forEach((key) => {
+            background.push(
+              Object.assign(
+                response.background[key],
+                { annotation: response.explanation_annotations.background[key] },
+                { link: key },
+                { text: response.background[key].text },
+              ),
+            );
           });
-        });
-        this.commit('refreshMessages', message);
-        this.commit('refreshBackground', background);
-        this.commit('refreshExplanations', explanations);
+          response.explanation_annotations.utterances.forEach((utterance, index) => {
+            explanations.push({
+              utterance: response.utterances[index],
+              annotation: utterance,
+              type: response.utterance_types[index],
+            });
+          });
+        } else if (response.background) {
+          Object.keys(response.background).forEach((key) => {
+            background.push(
+              Object.assign(response.background[key], {
+                link: key,
+              }),
+            );
+          });
+        }
+        commit('refreshMessages', message);
+        commit('refreshBackground', background);
+        commit('refreshExplanations', explanations);
       }).catch((reason) => {
         console.log(reason);
       });
