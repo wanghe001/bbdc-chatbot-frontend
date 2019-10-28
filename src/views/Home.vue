@@ -105,6 +105,8 @@ export default {
       }
       this.userMessage = '';
       this.$store.dispatch('fetchMessages', { explain: this.explainChecked });
+      this.explainTabClicked = false;
+      this.backgroundTabClicked = false;
     },
     setMessageGradient(message) {
       const redRGB = {
