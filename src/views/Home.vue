@@ -4,7 +4,7 @@
     <div v-if="loggedIn" class="chatbot-wrapper"
          :class="{expanded:explainTabClicked,'expanded-left':backgroundTabClicked}">
       <h3 class="title">Hello, {{$store.state.nickName}}</h3>
-      <span class="button explain" :class="{expanded:explainTabClicked}"
+      <span class="button explain" :class="{expanded:explainTabClicked,disabled:!explainChecked}"
             @click="tabButtonClicked('explain')">Explanation</span>
       <span class="button background" :class="{expanded:backgroundTabClicked}"
             @click="tabButtonClicked('background')">Background</span>
@@ -27,7 +27,8 @@
 
       </div>
     </div>
-    <div v-if="loggedIn" class="explanation-window" :class="{expanded: explainTabClicked}">
+    <div v-if="loggedIn"
+         class="explanation-window" :class="{expanded: explainTabClicked}">
       <div class='background section'>
         <h2 class='section-title'>Background</h2>
         <accordion v-for="(entity,index) in background"
@@ -53,6 +54,11 @@
       </div>
     </div>
     <div v-if="loggedIn" class="background-window" :class="{expanded: backgroundTabClicked}">
+      <accordion v-for="(entity,index) in backgroundText"
+                 :key="index"
+                 :title="entity.rawName"
+                 :body="entity.text"
+      ></accordion>
     </div>
   </div>
 </template>
@@ -81,6 +87,7 @@ export default {
       explainTabClicked: false,
       backgroundTabClicked: false,
       background: this.$store.state.background,
+      backgroundText: this.$store.state.backgroundText,
       explanations: this.$store.state.explanations,
       backgroundShown: false,
       backgroundContent: {},
@@ -372,6 +379,21 @@ export default {
       left:10vw;
       transition: 0.4s;
       z-index:-1;
+    }
+    .accordion-title{
+      background:white;
+      border: 1px solid #dddddd;
+      color: #4f4c4d;
+      box-shadow: 1px 1px 1px 1px #4f4c4d;
+      &:first-child{
+        margin-top:50px;
+      }
+    }
+    .accordion-body{
+      color: #4f4c4d;
+      text-align: justify;
+      padding: 10px;
+      margin: 10px;
     }
   }
 

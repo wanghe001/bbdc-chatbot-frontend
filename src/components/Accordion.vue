@@ -30,6 +30,8 @@ export default {
     border-radius: 5px;
     color: #CC4C58;
     text-align: left;
+    cursor: pointer;
+    user-select: none;
   }
   .accordion-body{
     color:white;

@@ -16,6 +16,7 @@ export default new Vuex.Store({
     ],
     explanations: [],
     background: [],
+    backgroundText: [],
   },
   mutations: {
     logIn(state) {
@@ -37,6 +38,10 @@ export default new Vuex.Store({
     refreshBackground(state, newBackground) {
       state.background.length = 0;
       state.background.push(...newBackground);
+    },
+    refreshBackgroundText(state, newBackgroundText) {
+      state.backgroundText.length = 0;
+      state.backgroundText.push(...newBackgroundText);
     },
     refreshExplanations(state, newExplanations) {
       state.explanations.length = 0;
@@ -64,6 +69,7 @@ export default new Vuex.Store({
         const message = [];
         const background = [];
         const explanations = [];
+        const backgroundText = [];
         for (let i = 0; i < response.utterances.length; i += 1) {
           message.push({
             text: response.utterances[i],
@@ -88,9 +94,10 @@ export default new Vuex.Store({
               type: response.utterance_types[index],
             });
           });
-        } else if (response.background) {
+        }
+        if (response.background) {
           Object.keys(response.background).forEach((key) => {
-            background.push(
+            backgroundText.push(
               Object.assign(response.background[key], {
                 link: key,
               }),
@@ -99,6 +106,7 @@ export default new Vuex.Store({
         }
         commit('refreshMessages', message);
         commit('refreshBackground', background);
+        commit('refreshBackgroundText', backgroundText);
         commit('refreshExplanations', explanations);
       }).catch((reason) => {
         console.log(reason);
