@@ -2,9 +2,10 @@
   <div class="home">
     <login-box v-if="!loggedIn"></login-box>
     <div v-if="loggedIn" class="chatbot-wrapper"
-         :class="{expanded:explainTabClicked,'expanded-left':backgroundTabClicked}">
+         :class="{expanded:explainTabClicked&&explainChecked,'expanded-left':backgroundTabClicked}">
       <h3 class="title">Hello, {{$store.state.nickName}}</h3>
-      <span class="button explain" :class="{expanded:explainTabClicked,disabled:!explainChecked}"
+      <span class="button explain"
+            :class="{expanded:explainTabClicked&&explainChecked,disabled:!explainChecked}"
             @click="tabButtonClicked('explain')">Explanation</span>
       <span class="button background" :class="{expanded:backgroundTabClicked}"
             @click="tabButtonClicked('background')">Background</span>
@@ -28,7 +29,7 @@
       </div>
     </div>
     <div v-if="loggedIn"
-         class="explanation-window" :class="{expanded: explainTabClicked}">
+         class="explanation-window" :class="{expanded: explainTabClicked&&explainChecked}">
       <div class='background section'>
         <h2 class='section-title'>Background</h2>
         <accordion v-for="(entity,index) in background"
@@ -201,6 +202,11 @@ export default {
           transform: rotate(0);
           right:-110px;
           transition: 0.4s;
+        }
+        &.disabled{
+          background:#AA2A36;
+          color: #dddddd;
+          cursor: not-allowed;
         }
       }
       &.background{
