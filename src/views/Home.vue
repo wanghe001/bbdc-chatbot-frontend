@@ -17,7 +17,9 @@
         </message-box>
       </div>
       <div class="user-message-wrapper">
-        <textarea id="user-text" v-model="userMessage"></textarea>
+        <textarea id="user-text" v-model="userMessage"
+                  @keyup.alt.enter="submitMessage"
+        ></textarea>
         <div class="submit-control">
           <span @click="submitMessage" class="user-text-submit">Send</span>
           <label class="explain-checkbox-container">Explain
@@ -97,16 +99,18 @@ export default {
   },
   methods: {
     submitMessage() {
-      if (this.userMessage !== '') {
+      console.log(this.userMessage.length);
+      if (this.userMessage.length !== 0) {
         this.$store.commit('addMessage', {
           text: this.userMessage,
           from: 'user',
         });
+        this.userMessage = '';
+        this.$store.dispatch('fetchMessages', { explain: this.explainChecked });
+        this.explainTabClicked = false;
+        this.backgroundTabClicked = false;
       }
-      this.userMessage = '';
-      this.$store.dispatch('fetchMessages', { explain: this.explainChecked });
-      this.explainTabClicked = false;
-      this.backgroundTabClicked = false;
+
     },
     setMessageGradient(message) {
       const redRGB = {
