@@ -2,10 +2,13 @@
   <div class="home">
     <login-box v-if="!loggedIn"></login-box>
     <div v-if="loggedIn" class="chatbot-wrapper"
-         :class="{expanded:explainTabClicked&&explainChecked,'expanded-left':backgroundTabClicked}">
+         :class="{expanded:explainTabClicked&&(explanations.length > 0),
+                 'expanded-left':backgroundTabClicked}">
       <h3 class="title">Hello, {{$store.state.nickName}}</h3>
       <span class="button explain"
-            :class="{expanded:explainTabClicked&&explainChecked,disabled:!explainChecked}"
+            :class="{disabled:!(explanations.length > 0),
+                     expanded:explainTabClicked&&(explanations.length > 0)
+                     }"
             @click="tabButtonClicked('explain')">Explanation</span>
       <span class="button background" :class="{expanded:backgroundTabClicked}"
             @click="tabButtonClicked('background')">Background</span>
@@ -31,7 +34,7 @@
       </div>
     </div>
     <div v-if="loggedIn"
-         class="explanation-window" :class="{expanded: explainTabClicked&&explainChecked}">
+         class="explanation-window" :class="{expanded: explainTabClicked&&(explanations.length > 0)}">
       <div class='background section'>
         <h2 class='section-title'>Background</h2>
         <accordion v-for="(entity,index) in background"
@@ -59,8 +62,8 @@
     <div v-if="loggedIn" class="background-window" :class="{expanded: backgroundTabClicked}">
       <accordion v-for="(entity,index) in backgroundText"
                  :key="index"
-                 :title="entity.rawName"
-                 :body="entity.text"
+                 :title="formatEntityTitle(entity)"
+                 :body="formatEntity(entity)"
       ></accordion>
     </div>
   </div>
@@ -110,7 +113,12 @@ export default {
         this.explainTabClicked = false;
         this.backgroundTabClicked = false;
       }
-
+    },
+    formatEntityTitle(entity) {
+      return `${entity.rawName} (${entity.type})`;
+    },
+    formatEntity(entity) {
+      return `<span>${entity.text}</div><br/><div>source: <a href="${entity.link}" target="_blank">${entity.link}</a></div><div>domains: ${entity.domains}</div>`;
     },
     setMessageGradient(message) {
       const redRGB = {
